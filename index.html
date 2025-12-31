@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surat Cinta & Kembang Api</title>
+    <title>Hepi new year yeah</title>
     <style>
         body {
             margin: 0; padding: 0;
-            background-color: #000;
+            /* Gradient Langit Malam */
+            background: linear-gradient(to bottom, #160230, #000000);
             color: white;
             font-family: 'Georgia', serif;
             overflow: hidden;
@@ -18,7 +19,6 @@
             height: 100vh;
         }
 
-        /* Overlay Awal */
         #overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -52,30 +52,44 @@
             pointer-events: none;
             opacity: 0;
             transition: opacity 3s;
+            /* Penambahan Padding dan Margin agar tidak mentok samping */
+            padding: 0 20px;
+            max-width: 800px; /* Membatasi lebar teks agar tidak terlalu melebar di desktop */
+            box-sizing: border-box;
+            overflow-y: auto; /* Antisipasi jika teks sangat panjang di layar kecil */
+            max-height: 80vh;
         }
 
-        h1 { font-weight: 300; font-size: 2rem; letter-spacing: 5px; margin-bottom: 10px; }
-        p.sub { font-size: 0.9rem; color: #888; letter-spacing: 1px; }
+        h1 { font-weight: 300; font-size: 2rem; letter-spacing: 5px; margin-bottom: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        p.sub { font-size: 0.9rem; color: #ccc; letter-spacing: 1px; line-height: 1.6; }
 
         canvas { position: absolute; top: 0; left: 0; z-index: 1; }
 
-        /* Responsif HP */
         @media (max-width: 600px) {
             h1 { font-size: 1.4rem; }
             button { padding: 12px 30px; font-size: 0.9rem; }
+            header { margin-top: 10vh; padding: 0 15px; }
+            p.sub { font-size: 0.85rem; }
         }
     </style>
 </head>
 <body>
 
     <div id="overlay">
-        <p style="margin-bottom: 25px; font-style: italic; opacity: 0.7;">Sebuah pesan untukmu...</p>
-        <button onclick="startExperience()">BUKA SURAT</button>
+        <p style="margin-bottom: 25px; font-style: italic; opacity: 0.7;">I just wanna say something..</p>
+        <button onclick="startExperience()">You may click here</button>
     </div>
 
     <header id="mainHeader">
         <h1>I LOVE YOU</h1>
-        <p class="sub">Happy New Year 2025</p>
+        <p class="sub">As this year comes to an end, I just want you to know how deeply grateful I am for you, Kia. For every day you chose us, for every moment you stayed, even when things weren’t easy.
+
+This year wasn’t light. It was heavy, tiring, and sometimes quiet. But somehow, knowing you were there always supporting, believing, and holding on..made everything feel worth the wait.</br></br>
+
+Terima kasih sudah kuat, sabar, dan tetap percaya sama kita, bahkan saat jarak jadi tantangan. As the new year begins, I hope it brings us more strength, more resilience, and more trust in what we’re building together. Semoga jarak justru membentuk kita jadi versi yang lebih dewasa dan saling menguatkan.</br></br>
+
+Aku bangga sama kamu.
+Dan aku bersyukur kita masih berjalan sejauh ini, bersama-sama.</p>
     </header>
 
     <canvas id="fireworksCanvas"></canvas>
@@ -91,14 +105,35 @@
         
         let particles = [];
         let fireworks = [];
+        let stars = [];
         let active = false;
         const phrases = ["I LOVE YOU", "HAPPY NEW YEAR"];
 
+        function initStars() {
+            stars = [];
+            for (let i = 0; i < 200; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 1.5,
+                    opacity: Math.random()
+                });
+            }
+        }
+
+        function drawStars() {
+            ctx.fillStyle = "white";
+            stars.forEach(star => {
+                ctx.globalAlpha = star.opacity;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1.0;
+        }
+
         function startExperience() {
-            // Putar Musik
             audio.play().catch(e => console.log("Audio play failed", e));
-            
-            // Hilangkan Overlay
             document.getElementById('overlay').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('overlay').style.display = 'none';
@@ -113,6 +148,7 @@
         function resize() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            initStars(); 
         }
         window.addEventListener('resize', resize);
 
@@ -121,13 +157,12 @@
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height;
                 this.sy = Math.random() * -3 - 5; 
-                // Warna pastel yang lembut (biru-ungu-pink)
-                this.color = `hsl(${Math.random() * 60 + 200}, 50%, 75%)`;
+                this.color = `hsl(${Math.random() * 60 + 180}, 70%, 75%)`;
                 this.shouldExplode = false;
             }
             update() {
                 this.y += this.sy;
-                this.sy += 0.08; // Efek gravitasi
+                this.sy += 0.08;
                 if (this.sy >= -0.5) this.shouldExplode = true;
             }
             draw() {
@@ -150,44 +185,45 @@
             update() {
                 this.x += this.sx; this.y += this.sy;
                 this.sy += 0.03;
-                this.life -= 0.7; // Kecepatan memudar
+                this.life -= 0.8;
             }
             draw() {
                 ctx.globalAlpha = this.life / 100;
                 ctx.fillStyle = this.color;
                 if(this.txt) {
-                    ctx.font = "italic bold 16px Georgia";
+                    ctx.font = "italic bold 18px Georgia";
                     ctx.fillText(this.txt, this.x, this.y);
                 } else {
                     ctx.beginPath();
-                    ctx.arc(this.x, this.y, 1, 0, Math.PI * 2);
+                    ctx.arc(this.x, this.y, 1.2, 0, Math.PI * 2);
                     ctx.fill();
                 }
             }
         }
 
         function explode(x, y, color) {
-            // Peluang 40% muncul teks saat meledak
-            if(Math.random() > 0.6) {
+            if(Math.random() > 0.5) {
                 const phrase = phrases[Math.floor(Math.random() * phrases.length)];
                 phrase.split("").forEach((char, i) => {
                     let p = new Particle(x, y, "#fff", char);
-                    p.sx = (i - phrase.length/2) * 1.3;
+                    p.sx = (i - phrase.length/2) * 1.5;
                     p.sy = (Math.random() - 0.5) * 2;
                     particles.push(p);
                 });
             } else {
-                for(let i=0; i<50; i++) particles.push(new Particle(x, y, color));
+                for(let i=0; i<60; i++) particles.push(new Particle(x, y, color));
             }
         }
 
         function animate() {
             if (!active) return;
-            // Efek trail/jejak kembang api
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawStars();
 
-            if (Math.random() < 0.025) fireworks.push(new Firework());
+            ctx.fillStyle = 'rgba(0, 0, 40, 0.2)'; 
+            
+            if (Math.random() < 0.03) fireworks.push(new Firework());
 
             fireworks.forEach((fw, i) => {
                 fw.update(); fw.draw();
@@ -201,8 +237,11 @@
                 p.update(); p.draw();
                 if (p.life <= 0) particles.splice(i, 1);
             });
+            
             requestAnimationFrame(animate);
         }
+
+        resize();
     </script>
 </body>
 </html>
